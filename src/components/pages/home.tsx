@@ -24,7 +24,7 @@ export default function LandingPage() {
         <div className="max-w-[980px] mx-auto flex h-12 items-center justify-between px-4">
           <div className="flex items-center">
             <Link to="/" className="font-medium text-xl">
-              Hospital Resource Management
+              MediLink
             </Link>
           </div>
           <div className="flex items-center space-x-4">
@@ -101,7 +101,7 @@ export default function LandingPage() {
         {/* Hero section */}
         <section className="py-20 text-center">
           <h2 className="text-5xl font-semibold tracking-tight mb-1">
-            Hospital Resource Management
+            MediLink
           </h2>
           <h3 className="text-2xl font-medium text-gray-500 mb-4">
             Real-time bed & resource management system for healthcare facilities
@@ -345,27 +345,30 @@ const subscription = supabase
           <div className="border-b border-gray-300 pb-8 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h4 className="font-medium text-sm text-gray-900 mb-4">
-                Hospital Resource Management
+                MediLink
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="hover:underline">
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="hover:underline">
+                  <Link to="/dashboard" className="hover:underline">
                     Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Demo
+                  <Link to="/dashboard?tab=beds" className="hover:underline">
+                    Bed Management
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/dashboard?tab=queue" className="hover:underline">
+                    Patient Queue
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard?tab=resources"
+                    className="hover:underline"
+                  >
+                    Resource Allocation
                   </Link>
                 </li>
               </ul>
@@ -376,24 +379,35 @@ const subscription = supabase
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Getting Started
+                  <Link
+                    to="/dashboard?tab=overview"
+                    className="hover:underline"
+                  >
+                    Dashboard Overview
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    API Reference
+                  <Link to="/dashboard?tab=team" className="hover:underline">
+                    Team Directory
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Tutorials
-                  </Link>
+                  <a
+                    href="https://supabase.com/docs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Supabase Documentation
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Support
-                  </Link>
+                  <a
+                    href="mailto:support@medilink.example.com"
+                    className="hover:underline"
+                  >
+                    Contact Support
+                  </a>
                 </li>
               </ul>
             </div>
@@ -403,24 +417,24 @@ const subscription = supabase
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/" className="hover:underline">
+                  <a href="#implementation" className="hover:underline">
                     Implementation Guide
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Staff Training
-                  </Link>
+                  <a href="#training" className="hover:underline">
+                    Staff Training Resources
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Case Studies
-                  </Link>
+                  <a href="#case-studies" className="hover:underline">
+                    Success Stories
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Compliance
-                  </Link>
+                  <a href="#compliance" className="hover:underline">
+                    HIPAA Compliance Guide
+                  </a>
                 </li>
               </ul>
             </div>
@@ -428,32 +442,32 @@ const subscription = supabase
               <h4 className="font-medium text-sm text-gray-900 mb-4">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Privacy
-                  </Link>
+                  <a href="#privacy" className="hover:underline">
+                    Privacy Policy
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Terms
-                  </Link>
+                  <a href="#terms" className="hover:underline">
+                    Terms of Service
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
+                  <a href="#hipaa" className="hover:underline">
                     HIPAA Compliance
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/" className="hover:underline">
-                    Data Security
-                  </Link>
+                  <a href="#security" className="hover:underline">
+                    Data Security Practices
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="py-4">
             <p>
-              Copyright © 2025 Hospital Resource Management System. All rights
-              reserved.
+              Copyright © 2025 MediLink - Hospital Resource Management System.
+              All rights reserved.
             </p>
           </div>
         </div>

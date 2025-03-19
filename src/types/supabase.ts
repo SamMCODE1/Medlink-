@@ -9,6 +9,276 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      beds: {
+        Row: {
+          bed_number: string
+          created_at: string | null
+          department_id: string
+          id: string
+          notes: string | null
+          patient_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          bed_number: string
+          created_at?: string | null
+          department_id: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          bed_number?: string
+          created_at?: string | null
+          department_id?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beds_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      departments: {
+        Row: {
+          created_at: string | null
+          floor: number
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          floor: number
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          floor?: number
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      equipment: {
+        Row: {
+          created_at: string | null
+          department_id: string | null
+          id: string
+          last_maintenance_date: string | null
+          name: string
+          notes: string | null
+          status: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department_id?: string | null
+          id?: string
+          last_maintenance_date?: string | null
+          name: string
+          notes?: string | null
+          status: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department_id?: string | null
+          id?: string
+          last_maintenance_date?: string | null
+          name?: string
+          notes?: string | null
+          status?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean
+          message: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      patient_queue: {
+        Row: {
+          created_at: string | null
+          department_id: string
+          estimated_wait_time: number | null
+          id: string
+          notes: string | null
+          patient_id: string
+          priority: number
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department_id: string
+          estimated_wait_time?: number | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          priority?: number
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department_id?: string
+          estimated_wait_time?: number | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          priority?: number
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_queue_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_queue_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          contact_number: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          email: string | null
+          full_name: string
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          contact_number?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          contact_number?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      staff: {
+        Row: {
+          contact_number: string | null
+          created_at: string | null
+          department_id: string | null
+          email: string | null
+          full_name: string
+          id: string
+          role: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          contact_number?: string | null
+          created_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          role: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          contact_number?: string | null
+          created_at?: string | null
+          department_id?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          role?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null

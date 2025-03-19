@@ -9,15 +9,25 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="max-w-[980px] mx-auto flex h-12 items-center justify-between px-4">
           <div className="flex items-center">
             <Link to="/" className="font-medium text-xl">
-              Tempo Starter Kit
+              MediLink
             </Link>
           </div>
           <nav className="hidden md:flex items-center space-x-7 text-sm font-light">
-            <Link to="/" className="hover:text-gray-500">Features</Link>
-            <Link to="/" className="hover:text-gray-500">Documentation</Link>
-            <Link to="/" className="hover:text-gray-500">Components</Link>
-            <Link to="/" className="hover:text-gray-500">Examples</Link>
-            <Link to="/" className="hover:text-gray-500">Support</Link>
+            <Link to="/" className="hover:text-gray-500">
+              Features
+            </Link>
+            <Link to="/" className="hover:text-gray-500">
+              Documentation
+            </Link>
+            <Link to="/" className="hover:text-gray-500">
+              Components
+            </Link>
+            <Link to="/" className="hover:text-gray-500">
+              Examples
+            </Link>
+            <Link to="/" className="hover:text-gray-500">
+              Support
+            </Link>
           </nav>
         </div>
       </header>
@@ -25,9 +35,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       <div className="min-h-screen flex items-center justify-center pt-12">
         <div className="max-w-md w-full px-4">
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-semibold tracking-tight">Tempo Starter Kit</h2>
+            <h2 className="text-4xl font-semibold tracking-tight">MediLink</h2>
             <p className="text-xl font-medium text-gray-500 mt-2">
-              Sign in to access your account
+              Hospital Resource Management System
             </p>
           </div>
           {children}

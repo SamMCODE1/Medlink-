@@ -1,49 +1,157 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import TopNavigation from "../dashboard/layout/TopNavigation";
 import Sidebar from "../dashboard/layout/Sidebar";
 import DashboardGrid from "../dashboard/DashboardGrid";
-import TaskBoard from "../dashboard/TaskBoard";
+import RealtimeStatus from "../dashboard/RealtimeStatus";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "../../../supabase/auth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { OfflineIndicator } from "@/components/ui/offline-indicator";
+import HelpChatbot from "../dashboard/HelpChatbot";
 
-const Home = () => {
-  const [loading, setLoading] = useState(false);
-  
-  // Function to trigger loading state for demonstration
-  const handleRefresh = () => {
-    setLoading(true);
-    // Reset loading after 2 seconds
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+// Lazy load heavy components to improve initial load time
+const BedManagement = lazy(() => import("../dashboard/BedManagement"));
+const PatientQueue = lazy(() => import("../dashboard/PatientQueue"));
+const Calendar = lazy(() => import("../dashboard/Calendar"));
+const TeamDirectory = lazy(() => import("../dashboard/TeamDirectory"));
+
+const Dashboard = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const { user, userData } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("overview");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Parse tab from URL query parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const tabParam = searchParams.get("tab");
+    if (
+      tabParam &&
+      ["overview", "beds", "queue", "calendar", "team"].includes(tabParam)
+    ) {
+      setActiveTab(tabParam);
+    }
+  }, [location]);
+
+  // Update URL when tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    navigate(`/dashboard?tab=${value}`, { replace: true });
   };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    // Simulate refresh delay
+    setTimeout(() => setRefreshing(false), 1000);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   return (
-    <div className="min-h-screen bg-[#f5f5f7]">
-      <TopNavigation />
-      <div className="flex h-[calc(100vh-64px)] mt-16">
-        <Sidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto px-6 pt-4 pb-2 flex justify-end">
-            <Button 
-              onClick={handleRefresh} 
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 h-9 shadow-sm transition-colors flex items-center gap-2"
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <TopNavigation onSearch={handleSearch} />
+        <OfflineIndicator />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">MediLink Dashboard</h1>
+            <Button
+              onClick={handleRefresh}
+              variant="outline"
+              size="sm"
+              className={cn("gap-1", refreshing && "animate-spin")}
             >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              {loading ? "Loading..." : "Refresh Dashboard"}
+              <RefreshCw className="h-4 w-4" />
+              Refresh
             </Button>
           </div>
-          <div className={cn(
-            "container mx-auto p-6 space-y-8",
-            "transition-all duration-300 ease-in-out"
-          )}>
-            <DashboardGrid isLoading={loading} />
-            <TaskBoard isLoading={loading} />
-          </div>
+
+          <Tabs
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="mb-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="beds">Bed Management</TabsTrigger>
+              <TabsTrigger value="queue">Patient Queue</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
+              <TabsTrigger value="team">Team</TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview" className="space-y-4">
+              <ErrorBoundary>
+                <DashboardGrid searchQuery={searchQuery} />
+                <RealtimeStatus />
+              </ErrorBoundary>
+            </TabsContent>
+            <TabsContent value="beds">
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center h-64">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  }
+                >
+                  <BedManagement searchQuery={searchQuery} />
+                </Suspense>
+              </ErrorBoundary>
+            </TabsContent>
+            <TabsContent value="queue">
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center h-64">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  }
+                >
+                  <PatientQueue searchQuery={searchQuery} />
+                </Suspense>
+              </ErrorBoundary>
+            </TabsContent>
+            <TabsContent value="calendar">
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center h-64">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  }
+                >
+                  <Calendar />
+                </Suspense>
+              </ErrorBoundary>
+            </TabsContent>
+            <TabsContent value="team">
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center h-64">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  }
+                >
+                  <TeamDirectory searchQuery={searchQuery} />
+                </Suspense>
+              </ErrorBoundary>
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
+      <HelpChatbot />
     </div>
   );
 };
 
-export default Home;
+export default Dashboard;

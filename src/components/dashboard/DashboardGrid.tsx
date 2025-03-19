@@ -1,208 +1,311 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarDays, BarChart2, Users, Clock } from "lucide-react";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Badge } from "@/components/ui/badge";
+import {
+  Activity,
+  AlertCircle,
+  Bed,
+  Clock,
+  Users,
+  Stethoscope,
+  Wrench,
+  Bell,
+} from "lucide-react";
+import { useAuth } from "../../../supabase/auth";
+import { supabase } from "../../../supabase/supabase";
 
-interface ProjectCardProps {
-  title: string;
-  progress: number;
-  team: Array<{ name: string; avatar: string }>;
-  dueDate: string;
-}
+export default function DashboardGrid() {
+  const { user } = useAuth();
+  const [alerts, setAlerts] = useState<
+    { title: string; description: string; type: string }[]
+  >([
+    {
+      title: "Emergency Department at 90% capacity",
+      description: "Consider redirecting non-critical patients",
+      type: "warning",
+    },
+    {
+      title: "Scheduled system maintenance",
+      description: "Tonight at 2:00 AM - 4:00 AM",
+      type: "info",
+    },
+    {
+      title: "New staff onboarding complete",
+      description: "5 new staff members added to the system",
+      type: "success",
+    },
+  ]);
 
-interface DashboardGridProps {
-  projects?: ProjectCardProps[];
-  isLoading?: boolean;
-}
+  const [stats, setStats] = useState({
+    beds: { total: 120, available: 102, departments: 8 },
+    patients: { inQueue: 23, avgWait: 35, highPriority: 4 },
+    staff: { total: 42, doctors: 15, nurses: 27 },
+    equipment: { operational: 95, maintenance: 3 },
+  });
 
-const defaultProjects: ProjectCardProps[] = [
-  {
-    title: "Website Redesign",
-    progress: 75,
-    team: [
-      {
-        name: "Alice",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice",
-      },
-      {
-        name: "Bob",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob",
-      },
-      {
-        name: "Charlie",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie",
-      },
-    ],
-    dueDate: "2024-04-15",
-  },
-  {
-    title: "Mobile App Development",
-    progress: 45,
-    team: [
-      {
-        name: "David",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-      },
-      {
-        name: "Eve",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Eve",
-      },
-    ],
-    dueDate: "2024-05-01",
-  },
-  {
-    title: "Marketing Campaign",
-    progress: 90,
-    team: [
-      {
-        name: "Frank",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Frank",
-      },
-      {
-        name: "Grace",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Grace",
-      },
-      {
-        name: "Henry",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Henry",
-      },
-    ],
-    dueDate: "2024-03-30",
-  },
-];
-
-const ProjectCard = ({ title, progress, team, dueDate }: ProjectCardProps) => {
-  return (
-    <Card className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium text-gray-900">{title}</CardTitle>
-        <div className="h-8 w-8 rounded-full bg-gray-50 flex items-center justify-center">
-          <BarChart2 className="h-4 w-4 text-gray-500" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-medium">
-              <span className="text-gray-500">Progress</span>
-              <span className="text-gray-900">{progress}%</span>
-            </div>
-            <Progress value={progress} className="h-2 bg-gray-100 rounded-full" 
-              style={{
-                backgroundColor: 'rgb(243, 244, 246)',
-              } as React.CSSProperties} />
-          </div>
-          <div className="flex justify-between text-sm">
-            <div className="flex items-center gap-2 text-gray-500">
-              <Clock className="h-4 w-4" />
-              <span>Due {dueDate}</span>
-            </div>
-            <div className="flex -space-x-2">
-              {team.map((member, i) => (
-                <Avatar key={i} className="h-7 w-7 border-2 border-white shadow-sm">
-                  <AvatarImage src={member.avatar} alt={member.name} />
-                  <AvatarFallback className="bg-blue-100 text-blue-800 font-medium">{member.name[0]}</AvatarFallback>
-                </Avatar>
-              ))}
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-const DashboardGrid = ({ projects = defaultProjects, isLoading = false }: DashboardGridProps) => {
-  const [loading, setLoading] = useState(isLoading);
-  
-  // Simulate loading for demo purposes
   useEffect(() => {
-    if (isLoading) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
+    // Set up realtime subscription for alerts
+    const alertsSubscription = supabase
+      .channel("alerts-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications" },
+        (payload) => {
+          console.log("Notification received!", payload);
+          if (payload.new && payload.eventType === "INSERT") {
+            const newAlert = {
+              title: payload.new.title,
+              description: payload.new.message,
+              type: payload.new.type || "info",
+            };
 
-  if (loading) {
-    return (
-      <div className="p-6 h-full">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, index) => (
-            <Card key={index} className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm h-[220px] flex items-center justify-center">
-              <div className="flex flex-col items-center justify-center p-6">
-                <div className="relative">
-                  <div className="h-12 w-12 rounded-full border-4 border-gray-100 border-t-blue-500 animate-spin" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-4 w-4 rounded-full bg-blue-500/20 animate-pulse" />
+            setAlerts((prev) => [newAlert, ...prev.slice(0, 2)]);
+          }
+        },
+      )
+      .subscribe();
+
+    // Fetch initial stats
+    const fetchStats = async () => {
+      try {
+        // Fetch bed stats
+        const { data: bedData } = await supabase
+          .from("beds")
+          .select("status, department_id");
+
+        if (bedData) {
+          const totalBeds = bedData.length;
+          const availableBeds = bedData.filter(
+            (b) => b.status === "available",
+          ).length;
+          const departments = new Set(bedData.map((b) => b.department_id)).size;
+
+          setStats((prev) => ({
+            ...prev,
+            beds: {
+              total: totalBeds,
+              available: availableBeds,
+              departments,
+            },
+          }));
+        }
+
+        // Fetch patient queue stats
+        const { data: queueData } = await supabase
+          .from("patient_queue")
+          .select("priority, estimated_wait_time");
+
+        if (queueData) {
+          const inQueue = queueData.length;
+          const highPriority = queueData.filter((q) => q.priority <= 2).length;
+          const avgWait =
+            queueData.reduce(
+              (sum, q) => sum + (q.estimated_wait_time || 0),
+              0,
+            ) / (queueData.length || 1);
+
+          setStats((prev) => ({
+            ...prev,
+            patients: {
+              inQueue,
+              avgWait: Math.round(avgWait),
+              highPriority,
+            },
+          }));
+        }
+
+        // Fetch staff stats
+        const { data: staffData } = await supabase.from("staff").select("role");
+
+        if (staffData) {
+          const total = staffData.length;
+          const doctors = staffData.filter((s) => s.role === "doctor").length;
+          const nurses = staffData.filter((s) => s.role === "nurse").length;
+
+          setStats((prev) => ({
+            ...prev,
+            staff: {
+              total,
+              doctors,
+              nurses,
+            },
+          }));
+        }
+
+        // Fetch equipment stats
+        const { data: equipmentData } = await supabase
+          .from("equipment")
+          .select("status");
+
+        if (equipmentData) {
+          const total = equipmentData.length;
+          const maintenance = equipmentData.filter(
+            (e) => e.status === "maintenance" || e.status === "out_of_order",
+          ).length;
+          const operational = Math.round(((total - maintenance) / total) * 100);
+
+          setStats((prev) => ({
+            ...prev,
+            equipment: {
+              operational,
+              maintenance,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
+      }
+    };
+
+    fetchStats();
+
+    return () => {
+      supabase.removeChannel(alertsSubscription);
+    };
+  }, []);
+
+  const getAlertStyle = (type: string) => {
+    switch (type) {
+      case "warning":
+        return {
+          bg: "bg-yellow-50",
+          text: "text-yellow-800",
+          border: "border-yellow-200",
+          iconColor: "text-yellow-600",
+          icon: <AlertCircle className="h-5 w-5 text-yellow-600" />,
+        };
+      case "success":
+        return {
+          bg: "bg-green-50",
+          text: "text-green-800",
+          border: "border-green-200",
+          iconColor: "text-green-600",
+          icon: <Stethoscope className="h-5 w-5 text-green-600" />,
+        };
+      case "error":
+        return {
+          bg: "bg-red-50",
+          text: "text-red-800",
+          border: "border-red-200",
+          iconColor: "text-red-600",
+          icon: <AlertCircle className="h-5 w-5 text-red-600" />,
+        };
+      default: // info
+        return {
+          bg: "bg-blue-50",
+          text: "text-blue-800",
+          border: "border-blue-200",
+          iconColor: "text-blue-600",
+          icon: <Activity className="h-5 w-5 text-blue-600" />,
+        };
+    }
+  };
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total Beds</CardTitle>
+          <Bed className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.beds.total}</div>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              Across {stats.beds.departments} departments
+            </p>
+            <Badge variant="outline" className="bg-green-50 text-green-700">
+              {Math.round((stats.beds.available / stats.beds.total) * 100)}%
+              Available
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Patients in Queue
+          </CardTitle>
+          <Clock className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.patients.inQueue}</div>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              Avg. wait: {stats.patients.avgWait} minutes
+            </p>
+            <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
+              {stats.patients.highPriority} High Priority
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Staff On Duty</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{stats.staff.total}</div>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              {stats.staff.doctors} doctors, {stats.staff.nurses} nurses
+            </p>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+              Full Capacity
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Equipment Status
+          </CardTitle>
+          <Wrench className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {stats.equipment.operational}%
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              {stats.equipment.maintenance} items in maintenance
+            </p>
+            <Badge variant="outline" className="bg-green-50 text-green-700">
+              Operational
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="col-span-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bell className="h-5 w-5" />
+            System Alerts
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {alerts.map((alert, index) => {
+              const style = getAlertStyle(alert.type);
+              return (
+                <div
+                  key={index}
+                  className={`flex items-center gap-2 p-2 rounded-md ${style.bg} ${style.text} border ${style.border}`}
+                >
+                  {style.icon}
+                  <div>
+                    <p className="font-medium">{alert.title}</p>
+                    <p className="text-sm">{alert.description}</p>
                   </div>
                 </div>
-                <p className="mt-4 text-sm font-medium text-gray-500">Loading project data...</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
-  
-  return (
-    <div className="p-6 h-full">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Summary Cards */}
-        <Card className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium text-gray-900">
-              Total Projects
-            </CardTitle>
-            <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center">
-              <BarChart2 className="h-4 w-4 text-blue-500" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-gray-900">{projects.length}</div>
-            <p className="text-sm text-gray-500 mt-1">
-              Active projects this month
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium text-gray-900">Team Members</CardTitle>
-            <div className="h-8 w-8 rounded-full bg-purple-50 flex items-center justify-center">
-              <Users className="h-4 w-4 text-purple-500" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-gray-900">12</div>
-            <p className="text-sm text-gray-500 mt-1">Active contributors</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-white/90 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-medium text-gray-900">
-              Upcoming Deadlines
-            </CardTitle>
-            <div className="h-8 w-8 rounded-full bg-orange-50 flex items-center justify-center">
-              <CalendarDays className="h-4 w-4 text-orange-500" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-semibold text-gray-900">5</div>
-            <p className="text-sm text-gray-500 mt-1">Due this week</p>
-          </CardContent>
-        </Card>
-
-        {/* Project Cards */}
-        {projects.map((project, index) => (
-          <ProjectCard key={index} {...project} />
-        ))}
-      </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default DashboardGrid;
+}

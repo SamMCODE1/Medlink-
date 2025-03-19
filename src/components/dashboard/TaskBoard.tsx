@@ -63,7 +63,7 @@ const TaskBoard = ({
   isLoading = false,
 }: TaskBoardProps) => {
   const [loading, setLoading] = useState(isLoading);
-  
+
   // Simulate loading for demo purposes
   useEffect(() => {
     if (isLoading) {
@@ -74,9 +74,24 @@ const TaskBoard = ({
     }
   }, [isLoading]);
   const columns = [
-    { id: "todo", title: "To Do", color: "bg-gray-50", borderColor: "border-gray-200" },
-    { id: "in-progress", title: "In Progress", color: "bg-blue-50", borderColor: "border-blue-100" },
-    { id: "done", title: "Done", color: "bg-green-50", borderColor: "border-green-100" },
+    {
+      id: "todo",
+      title: "To Do",
+      color: "bg-gray-50",
+      borderColor: "border-gray-200",
+    },
+    {
+      id: "in-progress",
+      title: "In Progress",
+      color: "bg-blue-50",
+      borderColor: "border-blue-100",
+    },
+    {
+      id: "done",
+      title: "Done",
+      color: "bg-green-50",
+      borderColor: "border-green-100",
+    },
   ];
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
@@ -91,6 +106,17 @@ const TaskBoard = ({
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
     onTaskMove(taskId, status);
+
+    // Find the task and update it in the state
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return { ...task, status };
+      }
+      return task;
+    });
+
+    // This is a client-side update for immediate feedback
+    // The actual server update happens in onTaskMove
   };
 
   if (loading) {
@@ -103,7 +129,7 @@ const TaskBoard = ({
             Add Task
           </Button>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-6 h-[calc(100%-4rem)]">
           {columns.map((column) => (
             <div
@@ -111,7 +137,9 @@ const TaskBoard = ({
               className={`${column.color} rounded-xl p-4 border ${column.borderColor}`}
             >
               <h3 className="font-medium text-gray-900 mb-4 flex items-center">
-                <span className={`h-2 w-2 rounded-full mr-2 ${column.id === 'todo' ? 'bg-gray-400' : column.id === 'in-progress' ? 'bg-blue-400' : 'bg-green-400'}`}></span>
+                <span
+                  className={`h-2 w-2 rounded-full mr-2 ${column.id === "todo" ? "bg-gray-400" : column.id === "in-progress" ? "bg-blue-400" : "bg-green-400"}`}
+                ></span>
                 {column.title}
               </h3>
               <div className="space-y-3 flex flex-col items-center justify-center min-h-[200px]">
@@ -121,7 +149,9 @@ const TaskBoard = ({
                     <div className="h-3 w-3 rounded-full bg-blue-500/20 animate-pulse" />
                   </div>
                 </div>
-                <p className="text-sm font-medium text-gray-500 mt-3">Loading tasks...</p>
+                <p className="text-sm font-medium text-gray-500 mt-3">
+                  Loading tasks...
+                </p>
               </div>
             </div>
           ))}
@@ -129,7 +159,7 @@ const TaskBoard = ({
       </div>
     );
   }
-  
+
   return (
     <div className="w-full h-full bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -149,7 +179,9 @@ const TaskBoard = ({
             onDrop={(e) => handleDrop(e, column.id as Task["status"])}
           >
             <h3 className="font-medium text-gray-900 mb-4 flex items-center">
-              <span className={`h-2 w-2 rounded-full mr-2 ${column.id === 'todo' ? 'bg-gray-400' : column.id === 'in-progress' ? 'bg-blue-400' : 'bg-green-400'}`}></span>
+              <span
+                className={`h-2 w-2 rounded-full mr-2 ${column.id === "todo" ? "bg-gray-400" : column.id === "in-progress" ? "bg-blue-400" : "bg-green-400"}`}
+              ></span>
               {column.title}
             </h3>
             <div className="space-y-3">
@@ -182,6 +214,24 @@ const TaskBoard = ({
                           </span>
                         </div>
                       )}
+                      <div className="flex justify-end mt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs h-7 hover:bg-gray-100"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Mark as complete if in todo or in-progress
+                            if (task.status !== "done") {
+                              onTaskMove(task.id, "done");
+                            }
+                          }}
+                        >
+                          {task.status === "done"
+                            ? "Completed"
+                            : "Mark Complete"}
+                        </Button>
+                      </div>
                     </Card>
                   </motion.div>
                 ))}
