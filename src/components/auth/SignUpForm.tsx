@@ -65,6 +65,68 @@ export default function SignUpForm() {
         }
       }
 
+      // Get admin department ID or create it if it doesn't exist
+      let adminDepartmentId = null;
+
+      // Check if admin department exists
+      const { data: adminDept, error: adminDeptError } = await supabase
+        .from("departments")
+        .select("id")
+        .eq("name", "Administration")
+        .single();
+
+      if (adminDeptError && adminDeptError.code !== "PGRST116") {
+        console.error("Error checking admin department:", adminDeptError);
+      }
+
+      if (adminDept) {
+        adminDepartmentId = adminDept.id;
+      } else {
+        // Create admin department if it doesn't exist
+        const { data: newDept, error: deptError } = await supabase
+          .from("departments")
+          .insert({
+            name: "Administration",
+            floor: 1,
+          })
+          .select("id")
+          .single();
+
+        if (deptError) {
+          console.error("Error creating admin department:", deptError);
+        } else if (newDept) {
+          adminDepartmentId = newDept.id;
+        }
+      }
+
+      // Ensure we have a department ID for admin users
+      if (role === "admin" && !adminDepartmentId) {
+        // If we couldn't get or create the admin department, create a fallback
+        const { data: fallbackDept, error: fallbackError } = await supabase
+          .from("departments")
+          .insert({
+            name: "Administration",
+            floor: 1,
+          })
+          .select("id")
+          .single();
+
+        if (!fallbackError && fallbackDept) {
+          adminDepartmentId = fallbackDept.id;
+        } else {
+          // Last resort - get any department
+          const { data: anyDept } = await supabase
+            .from("departments")
+            .select("id")
+            .limit(1)
+            .single();
+
+          if (anyDept) {
+            adminDepartmentId = anyDept.id;
+          }
+        }
+      }
+
       // Then create a staff record with the selected role
       const { error: staffError } = await supabase.from("staff").insert({
         user_id: authData.user.id,
@@ -76,7 +138,21 @@ export default function SignUpForm() {
               ? "admin"
               : "doctor",
         email: email,
+        department_id:
+          role === "admin" || role === "reception" ? adminDepartmentId : null,
       });
+
+      // If this is an admin user, ensure they're assigned to the admin department
+      if ((role === "admin" || role === "reception") && adminDepartmentId) {
+        // Create a notification about the assignment
+        await supabase.from("notifications").insert({
+          user_id: authData.user.id,
+          title: "Department Assignment",
+          message: `You have been assigned to the Administration department`,
+          is_read: false,
+          type: "info",
+        });
+      }
 
       if (staffError) throw staffError;
 

@@ -19,6 +19,9 @@ const BedManagement = lazy(() => import("../dashboard/BedManagement"));
 const PatientQueue = lazy(() => import("../dashboard/PatientQueue"));
 const Calendar = lazy(() => import("../dashboard/Calendar"));
 const TeamDirectory = lazy(() => import("../dashboard/TeamDirectory"));
+const ResourceAllocation = lazy(
+  () => import("../dashboard/ResourceAllocation"),
+);
 
 const Dashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -34,7 +37,9 @@ const Dashboard = () => {
     const tabParam = searchParams.get("tab");
     if (
       tabParam &&
-      ["overview", "beds", "queue", "calendar", "team"].includes(tabParam)
+      ["overview", "beds", "queue", "calendar", "team", "resources"].includes(
+        tabParam,
+      )
     ) {
       setActiveTab(tabParam);
     }
@@ -54,6 +59,8 @@ const Dashboard = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    // Pass search query to all components that support it
+    console.log("Search query:", query);
   };
 
   return (
@@ -85,6 +92,7 @@ const Dashboard = () => {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="beds">Bed Management</TabsTrigger>
               <TabsTrigger value="queue">Patient Queue</TabsTrigger>
+              <TabsTrigger value="resources">Resources</TabsTrigger>
               <TabsTrigger value="calendar">Calendar</TabsTrigger>
               <TabsTrigger value="team">Team</TabsTrigger>
             </TabsList>
@@ -117,6 +125,19 @@ const Dashboard = () => {
                   }
                 >
                   <PatientQueue searchQuery={searchQuery} />
+                </Suspense>
+              </ErrorBoundary>
+            </TabsContent>
+            <TabsContent value="resources">
+              <ErrorBoundary>
+                <Suspense
+                  fallback={
+                    <div className="flex justify-center items-center h-64">
+                      <LoadingSpinner size="lg" />
+                    </div>
+                  }
+                >
+                  <ResourceAllocation />
                 </Suspense>
               </ErrorBoundary>
             </TabsContent>

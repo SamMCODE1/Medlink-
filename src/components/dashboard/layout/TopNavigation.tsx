@@ -47,6 +47,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import SettingsPanel from "./SettingsPanel";
 
 interface TopNavigationProps {
   onSearch?: (query: string) => void;
@@ -58,12 +59,6 @@ const TopNavigation = ({ onSearch = () => {} }: TopNavigationProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchValue, setSearchValue] = useState("");
-
-  // Settings state
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [compactView, setCompactView] = useState(false);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -152,16 +147,6 @@ const TopNavigation = ({ onSearch = () => {} }: TopNavigationProps) => {
         prev.map((notif) => ({ ...notif, is_read: true })),
       );
     }
-  };
-
-  const saveSettings = () => {
-    // In a real app, you would save these to user preferences in the database
-    // For now, we'll just show a toast notification
-    toast({
-      title: "Settings saved",
-      description: "Your preferences have been updated.",
-    });
-    setSettingsOpen(false);
   };
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
@@ -325,105 +310,8 @@ const TopNavigation = ({ onSearch = () => {} }: TopNavigationProps) => {
         </DropdownMenu>
       </div>
 
-      {/* Settings Dialog */}
-      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Settings</DialogTitle>
-            <DialogDescription>
-              Customize your MediLink experience with these settings.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Tabs defaultValue="general" className="mt-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="general">General</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="appearance">Appearance</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="general" className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="auto-refresh" className="font-medium">
-                    Auto Refresh
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Automatically refresh data every 30 seconds
-                  </p>
-                </div>
-                <Switch
-                  id="auto-refresh"
-                  checked={autoRefresh}
-                  onCheckedChange={setAutoRefresh}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="compact-view" className="font-medium">
-                    Compact View
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Use a more compact layout to show more information
-                  </p>
-                </div>
-                <Switch
-                  id="compact-view"
-                  checked={compactView}
-                  onCheckedChange={setCompactView}
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="notifications" className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label
-                    htmlFor="notifications-enabled"
-                    className="font-medium"
-                  >
-                    Enable Notifications
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Receive notifications about system updates
-                  </p>
-                </div>
-                <Switch
-                  id="notifications-enabled"
-                  checked={notificationsEnabled}
-                  onCheckedChange={setNotificationsEnabled}
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="appearance" className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="dark-mode" className="font-medium">
-                    Dark Mode
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    Switch between light and dark theme
-                  </p>
-                </div>
-                <Switch
-                  id="dark-mode"
-                  checked={darkMode}
-                  onCheckedChange={setDarkMode}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <DialogFooter className="mt-6">
-            <Button variant="outline" onClick={() => setSettingsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveSettings}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Settings Panel */}
+      <SettingsPanel open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 };

@@ -149,13 +149,33 @@ export default function TeamDirectory() {
       // Create a notification for the staff member
       const { error } = await supabase.from("notifications").insert({
         user_id: selectedStaff.user_id,
-        title: `Message from ${userData?.fullName || user?.email}`,
+        title: `Message from ${userData?.full_name || user?.email}`,
         message: messageText,
         is_read: false,
         type: "message",
       });
 
       if (error) throw error;
+
+      // Check if messages table exists
+      try {
+        // Store the message in a messages table for history
+        const { error: messageError } = await supabase.from("messages").insert({
+          sender_id: user?.id,
+          recipient_id: selectedStaff.user_id,
+          content: messageText,
+          is_read: false,
+        });
+
+        if (messageError) {
+          console.error("Error storing message history:", messageError);
+          // If the table doesn't exist, we'll create it in a migration later
+          // For now, just continue with the notification
+        }
+      } catch (messageStoreError) {
+        console.error("Error accessing messages table:", messageStoreError);
+        // Continue with the notification even if message storage fails
+      }
 
       toast({
         title: "Message sent",

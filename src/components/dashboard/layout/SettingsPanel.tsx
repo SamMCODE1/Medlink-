@@ -24,6 +24,10 @@ import {
   User,
   UserCog,
   ShieldCheck,
+  Palette,
+  Eye,
+  Volume2,
+  Languages,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -37,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface SettingsPanelProps {
   open: boolean;
@@ -55,6 +60,11 @@ export default function SettingsPanel({
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [securityAlerts, setSecurityAlerts] = useState(true);
+  const [soundEffects, setSoundEffects] = useState(true);
+  const [highContrast, setHighContrast] = useState(false);
+  const [fontSize, setFontSize] = useState("medium");
+  const [language, setLanguage] = useState("english");
+  const [colorTheme, setColorTheme] = useState("blue");
 
   // Profile state
   const [fullName, setFullName] = useState("");
@@ -96,6 +106,49 @@ export default function SettingsPanel({
     };
 
     fetchDepartments();
+
+    // Load user preferences from localStorage
+    const loadUserPreferences = () => {
+      const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+      const savedNotifications = localStorage.getItem('notifications') !== 'false';
+      const savedSecurityAlerts = localStorage.getItem('securityAlerts') !== 'false';
+      const savedSoundEffects = localStorage.getItem('soundEffects') !== 'false';
+      const savedHighContrast = localStorage.getItem('highContrast') === 'true';
+      const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+      const savedLanguage = localStorage.getItem('language') || 'english';
+      const savedColorTheme = localStorage.getItem('colorTheme') || 'blue';
+
+      setDarkMode(savedDarkMode);
+      setNotifications(savedNotifications);
+      setSecurityAlerts(savedSecurityAlerts);
+      setSoundEffects(savedSoundEffects);
+      setHighContrast(savedHighContrast);
+      setFontSize(savedFontSize);
+      setLanguage(savedLanguage);
+      setColorTheme(savedColorTheme);
+
+      // Apply dark mode if enabled
+      if (savedDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+
+      // Apply high contrast if enabled
+      if (savedHighContrast) {
+        document.documentElement.classList.add('high-contrast');
+      } else {
+        document.documentElement.classList.remove('high-contrast');
+      }
+
+      // Apply font size
+      document.documentElement.setAttribute('data-font-size', savedFontSize);
+
+      // Apply color theme
+      document.documentElement.setAttribute('data-color-theme', savedColorTheme);
+    };
+
+    loadUserPreferences();
   }, [user, userData]);
 
   const handleSignOut = async () => {
@@ -195,6 +248,44 @@ export default function SettingsPanel({
     }
   };
 
+  // Save settings to localStorage and apply them
+  const saveSettings = () => {
+    // Save to localStorage
+    localStorage.setItem('darkMode', darkMode.toString());
+    localStorage.setItem('notifications', notifications.toString());
+    localStorage.setItem('securityAlerts', securityAlerts.toString());
+    localStorage.setItem('soundEffects', soundEffects.toString());
+    localStorage.setItem('highContrast', highContrast.toString());
+    localStorage.setItem('fontSize', fontSize);
+    localStorage.setItem('language', language);
+    localStorage.setItem('colorTheme', colorTheme);
+
+    // Apply dark mode
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    // Apply high contrast
+    if (highContrast) {
+      document.documentElement.classList.add('high-contrast');
+    } else {
+      document.documentElement.classList.remove('high-contrast');
+    }
+
+    // Apply font size
+    document.documentElement.setAttribute('data-font-size', fontSize);
+
+    // Apply color theme
+    document.documentElement.setAttribute('data-color-theme', colorTheme);
+
+    toast({
+      title: "Settings saved",
+      description: "Your preferences have been updated.",
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
@@ -206,12 +297,16 @@ export default function SettingsPanel({
         </DialogHeader>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2">
+            <TabsTrigger value="appearance" className="flex items-center gap-2">
+              <Palette className="h-4 w-4" />
+              Appearance
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="flex items-center gap-2">
               <UserCog className="h-4 w-4" />
               Preferences
             </TabsTrigger>
@@ -240,13 +335,12 @@ export default function SettingsPanel({
                 <div className="font-medium text-lg">{fullName}</div>
                 <div className="text-sm text-gray-500">{email}</div>
                 <div className="mt-1">
-                  <Badge
-                    className={
+                  <Badge variant="outline" className={
                       userData?.role === "admin"
-                        ? "bg-blue-100 text-blue-800"
+                        ? "bg-blue-100 text-blue-800 border-blue-300"
                         : userData?.role === "medical_staff"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-purple-100 text-purple-800"
+                          ? "bg-green-100 text-green-800 border-green-300"
+                          : "bg-purple-100 text-purple-800 border-purple-300"
                     }
                   >
                     {userData?.role === "admin" && (
@@ -371,7 +465,7 @@ export default function SettingsPanel({
             </div>
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-4 py-4">
+          <TabsContent value="appearance" className="space-y-4 py-4">
             <div className="grid gap-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Moon className="h-4 w-4 text-gray-500 justify-self-center" />
@@ -385,6 +479,70 @@ export default function SettingsPanel({
                   className="justify-self-end"
                 />
               </div>
+              
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Eye className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="high-contrast" className="col-span-2">
+                  High Contrast
+                </Label>
+                <Switch
+                  id="high-contrast"
+                  checked={highContrast}
+                  onCheckedChange={setHighContrast}
+                  className="justify-self-end"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Palette className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="color-theme" className="col-span-2">
+                  Color Theme
+                </Label>
+                <Select
+                  value={colorTheme}
+                  onValueChange={setColorTheme}
+                >
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="blue">Blue</SelectItem>
+                    <SelectItem value="green">Green</SelectItem>
+                    <SelectItem value="purple">Purple</SelectItem>
+                    <SelectItem value="orange">Orange</SelectItem>
+                    <SelectItem value="red">Red</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <User className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="font-size" className="col-span-2">
+                  Font Size
+                </Label>
+                <Select
+                  value={fontSize}
+                  onValueChange={setFontSize}
+                >
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="small">Small</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="large">Large</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Button onClick={saveSettings} className="w-full mt-4">
+              Save Appearance Settings
+            </Button>
+          </TabsContent>
+
+          <TabsContent value="preferences" className="space-y-4 py-4">
+            <div className="grid gap-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Bell className="h-4 w-4 text-gray-500 justify-self-center" />
                 <Label htmlFor="notifications" className="col-span-2">
@@ -397,54 +555,16 @@ export default function SettingsPanel({
                   className="justify-self-end"
                 />
               </div>
+              
               <div className="grid grid-cols-4 items-center gap-4">
-                <Shield className="h-4 w-4 text-gray-500 justify-self-center" />
-                <Label htmlFor="security" className="col-span-2">
-                  Security Alerts
+                <Volume2 className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="sound-effects" className="col-span-2">
+                  Sound Effects
                 </Label>
                 <Switch
-                  id="security"
-                  checked={securityAlerts}
-                  onCheckedChange={setSecurityAlerts}
+                  id="sound-effects"
+                  checked={soundEffects}
+                  onCheckedChange={setSoundEffects}
                   className="justify-self-end"
                 />
               </div>
-            </div>
-
-            <div className="border-t my-2 pt-4">
-              <div className="text-sm text-gray-500 mb-2">Account</div>
-              <div className="text-sm">
-                <div className="font-medium">{user?.email}</div>
-                <div className="text-gray-500 text-xs mt-1">
-                  Last login: {new Date().toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-
-            <Button
-              variant="destructive"
-              onClick={handleSignOut}
-              className="w-full gap-2 mt-4"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </TabsContent>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-interface BadgeProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-function Badge({ children, className }: BadgeProps) {
-  return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium ${className}`}>
-      {children}
-    </span>
-  );
-}
