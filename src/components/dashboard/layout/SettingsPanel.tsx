@@ -28,6 +28,7 @@ import {
   Eye,
   Volume2,
   Languages,
+  UserPlus,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -109,14 +110,17 @@ export default function SettingsPanel({
 
     // Load user preferences from localStorage
     const loadUserPreferences = () => {
-      const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-      const savedNotifications = localStorage.getItem('notifications') !== 'false';
-      const savedSecurityAlerts = localStorage.getItem('securityAlerts') !== 'false';
-      const savedSoundEffects = localStorage.getItem('soundEffects') !== 'false';
-      const savedHighContrast = localStorage.getItem('highContrast') === 'true';
-      const savedFontSize = localStorage.getItem('fontSize') || 'medium';
-      const savedLanguage = localStorage.getItem('language') || 'english';
-      const savedColorTheme = localStorage.getItem('colorTheme') || 'blue';
+      const savedDarkMode = localStorage.getItem("darkMode") === "true";
+      const savedNotifications =
+        localStorage.getItem("notifications") !== "false";
+      const savedSecurityAlerts =
+        localStorage.getItem("securityAlerts") !== "false";
+      const savedSoundEffects =
+        localStorage.getItem("soundEffects") !== "false";
+      const savedHighContrast = localStorage.getItem("highContrast") === "true";
+      const savedFontSize = localStorage.getItem("fontSize") || "medium";
+      const savedLanguage = localStorage.getItem("language") || "english";
+      const savedColorTheme = localStorage.getItem("colorTheme") || "blue";
 
       setDarkMode(savedDarkMode);
       setNotifications(savedNotifications);
@@ -129,23 +133,26 @@ export default function SettingsPanel({
 
       // Apply dark mode if enabled
       if (savedDarkMode) {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
       } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
       }
 
       // Apply high contrast if enabled
       if (savedHighContrast) {
-        document.documentElement.classList.add('high-contrast');
+        document.documentElement.classList.add("high-contrast");
       } else {
-        document.documentElement.classList.remove('high-contrast');
+        document.documentElement.classList.remove("high-contrast");
       }
 
       // Apply font size
-      document.documentElement.setAttribute('data-font-size', savedFontSize);
+      document.documentElement.setAttribute("data-font-size", savedFontSize);
 
       // Apply color theme
-      document.documentElement.setAttribute('data-color-theme', savedColorTheme);
+      document.documentElement.setAttribute(
+        "data-color-theme",
+        savedColorTheme,
+      );
     };
 
     loadUserPreferences();
@@ -251,34 +258,34 @@ export default function SettingsPanel({
   // Save settings to localStorage and apply them
   const saveSettings = () => {
     // Save to localStorage
-    localStorage.setItem('darkMode', darkMode.toString());
-    localStorage.setItem('notifications', notifications.toString());
-    localStorage.setItem('securityAlerts', securityAlerts.toString());
-    localStorage.setItem('soundEffects', soundEffects.toString());
-    localStorage.setItem('highContrast', highContrast.toString());
-    localStorage.setItem('fontSize', fontSize);
-    localStorage.setItem('language', language);
-    localStorage.setItem('colorTheme', colorTheme);
+    localStorage.setItem("darkMode", darkMode.toString());
+    localStorage.setItem("notifications", notifications.toString());
+    localStorage.setItem("securityAlerts", securityAlerts.toString());
+    localStorage.setItem("soundEffects", soundEffects.toString());
+    localStorage.setItem("highContrast", highContrast.toString());
+    localStorage.setItem("fontSize", fontSize);
+    localStorage.setItem("language", language);
+    localStorage.setItem("colorTheme", colorTheme);
 
     // Apply dark mode
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
 
     // Apply high contrast
     if (highContrast) {
-      document.documentElement.classList.add('high-contrast');
+      document.documentElement.classList.add("high-contrast");
     } else {
-      document.documentElement.classList.remove('high-contrast');
+      document.documentElement.classList.remove("high-contrast");
     }
 
     // Apply font size
-    document.documentElement.setAttribute('data-font-size', fontSize);
+    document.documentElement.setAttribute("data-font-size", fontSize);
 
     // Apply color theme
-    document.documentElement.setAttribute('data-color-theme', colorTheme);
+    document.documentElement.setAttribute("data-color-theme", colorTheme);
 
     toast({
       title: "Settings saved",
@@ -306,7 +313,10 @@ export default function SettingsPanel({
               <Palette className="h-4 w-4" />
               Appearance
             </TabsTrigger>
-            <TabsTrigger value="preferences" className="flex items-center gap-2">
+            <TabsTrigger
+              value="preferences"
+              className="flex items-center gap-2"
+            >
               <UserCog className="h-4 w-4" />
               Preferences
             </TabsTrigger>
@@ -335,7 +345,9 @@ export default function SettingsPanel({
                 <div className="font-medium text-lg">{fullName}</div>
                 <div className="text-sm text-gray-500">{email}</div>
                 <div className="mt-1">
-                  <Badge variant="outline" className={
+                  <Badge
+                    variant="outline"
+                    className={
                       userData?.role === "admin"
                         ? "bg-blue-100 text-blue-800 border-blue-300"
                         : userData?.role === "medical_staff"
@@ -394,68 +406,176 @@ export default function SettingsPanel({
               {isAdmin && (
                 <div className="pt-4 border-t">
                   <h3 className="font-medium mb-2">Admin Controls</h3>
-                  <Dialog
-                    open={isBedDialogOpen}
-                    onOpenChange={setIsBedDialogOpen}
-                  >
-                    <DialogTrigger asChild>
-                      <Button className="w-full flex items-center gap-2">
-                        <Bed className="h-4 w-4" />
-                        Add New Bed
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Add New Bed</DialogTitle>
-                        <DialogDescription>
-                          Add a new bed to a department in the hospital.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="bedNumber" className="text-right">
-                            Bed Number
-                          </Label>
-                          <Input
-                            id="bedNumber"
-                            value={bedNumber}
-                            onChange={(e) => setBedNumber(e.target.value)}
-                            placeholder="e.g. A101"
-                            className="col-span-3"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="department" className="text-right">
-                            Department
-                          </Label>
-                          <Select
-                            value={bedDepartment}
-                            onValueChange={setBedDepartment}
-                          >
-                            <SelectTrigger className="col-span-3">
-                              <SelectValue placeholder="Select department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {departments.map((dept) => (
-                                <SelectItem key={dept.id} value={dept.id}>
-                                  {dept.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsBedDialogOpen(false)}
-                        >
-                          Cancel
+                  <div className="space-y-2">
+                    <Dialog
+                      open={isBedDialogOpen}
+                      onOpenChange={setIsBedDialogOpen}
+                    >
+                      <DialogTrigger asChild>
+                        <Button className="w-full flex items-center gap-2">
+                          <Bed className="h-4 w-4" />
+                          Add New Bed
                         </Button>
-                        <Button onClick={handleAddBed}>Add Bed</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Add New Bed</DialogTitle>
+                          <DialogDescription>
+                            Add a new bed to a department in the hospital.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="bedNumber" className="text-right">
+                              Bed Number
+                            </Label>
+                            <Input
+                              id="bedNumber"
+                              value={bedNumber}
+                              onChange={(e) => setBedNumber(e.target.value)}
+                              placeholder="e.g. A101"
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="department" className="text-right">
+                              Department
+                            </Label>
+                            <Select
+                              value={bedDepartment}
+                              onValueChange={setBedDepartment}
+                            >
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {departments.map((dept) => (
+                                  <SelectItem key={dept.id} value={dept.id}>
+                                    {dept.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => setIsBedDialogOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button onClick={handleAddBed}>Add Bed</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="w-full flex items-center gap-2">
+                          <UserPlus className="h-4 w-4" />
+                          Add Staff Member
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Add Staff Member</DialogTitle>
+                          <DialogDescription>
+                            Add a new staff member to a department in the
+                            hospital.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="staffName" className="text-right">
+                              Full Name
+                            </Label>
+                            <Input
+                              id="staffName"
+                              placeholder="John Doe"
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="staffEmail" className="text-right">
+                              Email
+                            </Label>
+                            <Input
+                              id="staffEmail"
+                              type="email"
+                              placeholder="john.doe@example.com"
+                              className="col-span-3"
+                            />
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="staffRole" className="text-right">
+                              Role
+                            </Label>
+                            <Select defaultValue="nurse">
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select role" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="doctor">Doctor</SelectItem>
+                                <SelectItem value="nurse">Nurse</SelectItem>
+                                <SelectItem value="admin">
+                                  Administrator
+                                </SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                              htmlFor="staffDepartment"
+                              className="text-right"
+                            >
+                              Department
+                            </Label>
+                            <Select>
+                              <SelectTrigger className="col-span-3">
+                                <SelectValue placeholder="Select department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {departments.map((dept) => (
+                                  <SelectItem key={dept.id} value={dept.id}>
+                                    {dept.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                              htmlFor="staffContact"
+                              className="text-right"
+                            >
+                              Contact
+                            </Label>
+                            <Input
+                              id="staffContact"
+                              placeholder="+1 (555) 123-4567"
+                              className="col-span-3"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button variant="outline">Cancel</Button>
+                          <Button
+                            onClick={() => {
+                              toast({
+                                title: "Staff member added",
+                                description:
+                                  "The staff member has been added successfully.",
+                              });
+                            }}
+                          >
+                            Add Staff Member
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
               )}
 
@@ -479,7 +599,7 @@ export default function SettingsPanel({
                   className="justify-self-end"
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Eye className="h-4 w-4 text-gray-500 justify-self-center" />
                 <Label htmlFor="high-contrast" className="col-span-2">
@@ -498,10 +618,7 @@ export default function SettingsPanel({
                 <Label htmlFor="color-theme" className="col-span-2">
                   Color Theme
                 </Label>
-                <Select
-                  value={colorTheme}
-                  onValueChange={setColorTheme}
-                >
+                <Select value={colorTheme} onValueChange={setColorTheme}>
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Theme" />
                   </SelectTrigger>
@@ -520,10 +637,7 @@ export default function SettingsPanel({
                 <Label htmlFor="font-size" className="col-span-2">
                   Font Size
                 </Label>
-                <Select
-                  value={fontSize}
-                  onValueChange={setFontSize}
-                >
+                <Select value={fontSize} onValueChange={setFontSize}>
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Size" />
                   </SelectTrigger>
@@ -555,7 +669,7 @@ export default function SettingsPanel({
                   className="justify-self-end"
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Volume2 className="h-4 w-4 text-gray-500 justify-self-center" />
                 <Label htmlFor="sound-effects" className="col-span-2">
@@ -568,3 +682,55 @@ export default function SettingsPanel({
                   className="justify-self-end"
                 />
               </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Shield className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="security" className="col-span-2">
+                  Security Alerts
+                </Label>
+                <Switch
+                  id="security"
+                  checked={securityAlerts}
+                  onCheckedChange={setSecurityAlerts}
+                  className="justify-self-end"
+                />
+              </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Languages className="h-4 w-4 text-gray-500 justify-self-center" />
+                <Label htmlFor="language" className="col-span-2">
+                  Language
+                </Label>
+                <Select value={language} onValueChange={setLanguage}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="spanish">Spanish</SelectItem>
+                    <SelectItem value="french">French</SelectItem>
+                    <SelectItem value="german">German</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="border-t my-2 pt-4">
+              <div className="text-sm text-gray-500 mb-2">Account</div>
+              <div className="text-sm">
+                <div className="font-medium">{user?.email}</div>
+                <div className="text-gray-500 text-xs mt-1">
+                  Last login: {new Date().toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+
+            <Button onClick={saveSettings} className="w-full mt-4">
+              Save Preference Settings
+            </Button>
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -64,6 +64,239 @@ type Equipment = {
   notes: string | null;
 };
 
+// Mock data for departments
+const mockDepartments: Department[] = [
+  { id: "1", name: "Emergency Department", floor: 1 },
+  { id: "2", name: "Surgery Recovery", floor: 2 },
+  { id: "3", name: "General Practice", floor: 1 },
+  { id: "4", name: "Pediatrics", floor: 3 },
+  { id: "5", name: "Maternity", floor: 2 },
+];
+
+// Mock data for staff
+const mockStaff: Staff[] = [
+  {
+    id: "1",
+    user_id: "user1",
+    full_name: "Dr. John Smith",
+    role: "doctor",
+    department_id: "1",
+    contact_number: "555-123-4567",
+    email: "john.smith@hospital.com",
+  },
+  {
+    id: "2",
+    user_id: "user2",
+    full_name: "Nurse Maria Garcia",
+    role: "nurse",
+    department_id: "1",
+    contact_number: "555-234-5678",
+    email: "maria.garcia@hospital.com",
+  },
+  {
+    id: "3",
+    user_id: "user3",
+    full_name: "Dr. Robert Johnson",
+    role: "doctor",
+    department_id: "2",
+    contact_number: "555-345-6789",
+    email: "robert.johnson@hospital.com",
+  },
+  {
+    id: "4",
+    user_id: "user4",
+    full_name: "Nurse Sarah Williams",
+    role: "nurse",
+    department_id: "2",
+    contact_number: "555-456-7890",
+    email: "sarah.williams@hospital.com",
+  },
+  {
+    id: "5",
+    user_id: "user5",
+    full_name: "Dr. David Brown",
+    role: "doctor",
+    department_id: "3",
+    contact_number: "555-567-8901",
+    email: "david.brown@hospital.com",
+  },
+  {
+    id: "6",
+    user_id: "user6",
+    full_name: "Nurse Emily Davis",
+    role: "nurse",
+    department_id: "3",
+    contact_number: "555-678-9012",
+    email: "emily.davis@hospital.com",
+  },
+  {
+    id: "7",
+    user_id: "user7",
+    full_name: "Dr. Michael Wilson",
+    role: "doctor",
+    department_id: "4",
+    contact_number: "555-789-0123",
+    email: "michael.wilson@hospital.com",
+  },
+  {
+    id: "8",
+    user_id: "user8",
+    full_name: "Nurse Jessica Taylor",
+    role: "nurse",
+    department_id: "4",
+    contact_number: "555-890-1234",
+    email: "jessica.taylor@hospital.com",
+  },
+  {
+    id: "9",
+    user_id: "user9",
+    full_name: "Dr. Thomas Anderson",
+    role: "doctor",
+    department_id: "5",
+    contact_number: "555-901-2345",
+    email: "thomas.anderson@hospital.com",
+  },
+  {
+    id: "10",
+    user_id: "user10",
+    full_name: "Nurse Jennifer Martin",
+    role: "nurse",
+    department_id: "5",
+    contact_number: "555-012-3456",
+    email: "jennifer.martin@hospital.com",
+  },
+  {
+    id: "11",
+    user_id: null,
+    full_name: "Dr. Lisa Rodriguez",
+    role: "doctor",
+    department_id: null,
+    contact_number: "555-123-7890",
+    email: "lisa.rodriguez@hospital.com",
+  },
+  {
+    id: "12",
+    user_id: null,
+    full_name: "Nurse Kevin Lee",
+    role: "nurse",
+    department_id: null,
+    contact_number: "555-234-8901",
+    email: "kevin.lee@hospital.com",
+  },
+];
+
+// Mock data for equipment
+const mockEquipment: Equipment[] = [
+  {
+    id: "1",
+    name: "Ventilator A",
+    type: "respiratory",
+    status: "in_use",
+    department_id: "1",
+    last_maintenance_date: "2023-12-15",
+    notes: "Regular maintenance performed",
+  },
+  {
+    id: "2",
+    name: "MRI Machine",
+    type: "imaging",
+    status: "available",
+    department_id: "2",
+    last_maintenance_date: "2024-01-10",
+    notes: null,
+  },
+  {
+    id: "3",
+    name: "Ultrasound Scanner",
+    type: "imaging",
+    status: "in_use",
+    department_id: "5",
+    last_maintenance_date: "2023-11-20",
+    notes: "Scheduled for calibration next month",
+  },
+  {
+    id: "4",
+    name: "Defibrillator B",
+    type: "emergency",
+    status: "available",
+    department_id: "1",
+    last_maintenance_date: "2024-02-05",
+    notes: null,
+  },
+  {
+    id: "5",
+    name: "X-Ray Machine",
+    type: "imaging",
+    status: "maintenance",
+    department_id: "3",
+    last_maintenance_date: "2024-03-01",
+    notes: "Currently undergoing repairs",
+  },
+  {
+    id: "6",
+    name: "Patient Monitor C",
+    type: "monitoring",
+    status: "in_use",
+    department_id: "4",
+    last_maintenance_date: "2024-01-25",
+    notes: null,
+  },
+  {
+    id: "7",
+    name: "Infusion Pump D",
+    type: "medication",
+    status: "available",
+    department_id: "2",
+    last_maintenance_date: "2023-12-10",
+    notes: null,
+  },
+  {
+    id: "8",
+    name: "Surgical Robot",
+    type: "surgical",
+    status: "in_use",
+    department_id: "2",
+    last_maintenance_date: "2024-02-15",
+    notes: "Used for minimally invasive procedures",
+  },
+  {
+    id: "9",
+    name: "Anesthesia Machine",
+    type: "surgical",
+    status: "available",
+    department_id: "2",
+    last_maintenance_date: "2024-01-05",
+    notes: null,
+  },
+  {
+    id: "10",
+    name: "ECG Machine",
+    type: "monitoring",
+    status: "available",
+    department_id: null,
+    last_maintenance_date: "2023-11-30",
+    notes: "Available for allocation",
+  },
+  {
+    id: "11",
+    name: "Portable X-Ray",
+    type: "imaging",
+    status: "available",
+    department_id: null,
+    last_maintenance_date: "2024-02-20",
+    notes: "Available for allocation",
+  },
+  {
+    id: "12",
+    name: "Ventilator B",
+    type: "respiratory",
+    status: "maintenance",
+    department_id: null,
+    last_maintenance_date: "2024-03-05",
+    notes: "Undergoing routine maintenance",
+  },
+];
+
 const roleColors = {
   doctor: "bg-blue-100 text-blue-800 border-blue-300",
   nurse: "bg-green-100 text-green-800 border-green-300",
@@ -81,10 +314,10 @@ const equipmentStatusColors = {
 export default function ResourceAllocation() {
   const { user, userData } = useAuth();
   const { toast } = useToast();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [staff, setStaff] = useState<Staff[]>([]);
-  const [equipment, setEquipment] = useState<Equipment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState<Department[]>(mockDepartments);
+  const [staff, setStaff] = useState<Staff[]>(mockStaff);
+  const [equipment, setEquipment] = useState<Equipment[]>(mockEquipment);
+  const [loading, setLoading] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
     null,
   );
@@ -112,50 +345,15 @@ export default function ResourceAllocation() {
     fetchDepartments();
     fetchStaff();
     fetchEquipment();
-
-    // Set up realtime subscriptions
-    const staffSubscription = supabase
-      .channel("staff-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "staff" },
-        (payload) => {
-          console.log("Staff change received!", payload);
-          fetchStaff();
-        },
-      )
-      .subscribe();
-
-    const equipmentSubscription = supabase
-      .channel("equipment-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "equipment" },
-        (payload) => {
-          console.log("Equipment change received!", payload);
-          fetchEquipment();
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(staffSubscription);
-      supabase.removeChannel(equipmentSubscription);
-    };
   }, []);
 
   const fetchDepartments = async () => {
     try {
-      const { data, error } = await supabase
-        .from("departments")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-
-      setDepartments(data || []);
-      if (data && data.length > 0 && !selectedDepartment) {
-        setSelectedDepartment(data[0].id);
+      // In a real app, we would fetch from Supabase
+      // For now, use mock data
+      setDepartments(mockDepartments);
+      if (mockDepartments.length > 0 && !selectedDepartment) {
+        setSelectedDepartment(mockDepartments[0].id);
       }
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -165,14 +363,9 @@ export default function ResourceAllocation() {
   const fetchStaff = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("staff")
-        .select("*")
-        .order("full_name");
-
-      if (error) throw error;
-
-      setStaff(data || []);
+      // In a real app, we would fetch from Supabase
+      // For now, use mock data
+      setStaff(mockStaff);
     } catch (error) {
       console.error("Error fetching staff:", error);
     } finally {
@@ -182,14 +375,9 @@ export default function ResourceAllocation() {
 
   const fetchEquipment = async () => {
     try {
-      const { data, error } = await supabase
-        .from("equipment")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-
-      setEquipment(data || []);
+      // In a real app, we would fetch from Supabase
+      // For now, use mock data
+      setEquipment(mockEquipment);
     } catch (error) {
       console.error("Error fetching equipment:", error);
     }
@@ -200,103 +388,28 @@ export default function ResourceAllocation() {
     departmentId: string | null,
   ) => {
     try {
-      // Get staff and department details for notification
-      const { data: staffData, error: staffError } = await supabase
-        .from("staff")
-        .select("*, user_id")
-        .eq("id", staffId)
-        .single();
-
-      if (staffError) throw staffError;
+      // Get staff details for notification
+      const staffMember = staff.find((s) => s.id === staffId);
+      if (!staffMember) throw new Error("Staff member not found");
 
       let departmentName = "Unassigned";
       if (departmentId) {
-        const { data: deptData, error: deptError } = await supabase
-          .from("departments")
-          .select("name")
-          .eq("id", departmentId)
-          .single();
-
-        if (!deptError && deptData) {
-          departmentName = deptData.name;
-        }
+        const dept = departments.find((d) => d.id === departmentId);
+        if (dept) departmentName = dept.name;
       }
 
-      // Update the staff assignment
-      const { error } = await supabase
-        .from("staff")
-        .update({
-          department_id: departmentId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", staffId);
-
-      if (error) throw error;
-
-      // Update local state for immediate feedback
+      // Update the staff assignment in our local state
       setStaff((prevStaff) =>
         prevStaff.map((s) =>
           s.id === staffId ? { ...s, department_id: departmentId } : s,
         ),
       );
 
-      // Notify the staff member if they have a user account
-      if (staffData.user_id) {
-        const title = "Department Assignment Update";
-        const message = departmentId
-          ? `You have been assigned to ${departmentName}`
-          : "You have been unassigned from your department";
-
-        const { error: notifError } = await supabase
-          .from("notifications")
-          .insert({
-            user_id: staffData.user_id,
-            title,
-            message,
-            is_read: false,
-          });
-
-        if (notifError)
-          console.error("Error creating notification:", notifError);
-      }
-
-      // Notify administrators
-      const { data: adminData, error: adminError } = await supabase
-        .from("staff")
-        .select("user_id")
-        .eq("role", "admin")
-        .not("user_id", "is", null);
-
-      if (!adminError && adminData && adminData.length > 0) {
-        const title = "Staff Assignment Update";
-        const message = departmentId
-          ? `${staffData.full_name} has been assigned to ${departmentName}`
-          : `${staffData.full_name} has been unassigned from their department`;
-
-        await Promise.all(
-          adminData.map(async (admin) => {
-            if (admin.user_id && admin.user_id !== staffData.user_id) {
-              const { error: notifError } = await supabase
-                .from("notifications")
-                .insert({
-                  user_id: admin.user_id,
-                  title,
-                  message,
-                  is_read: false,
-                });
-
-              if (notifError)
-                console.error("Error creating admin notification:", notifError);
-            }
-          }),
-        );
-      }
-
       toast({
         title: "Staff Assignment Updated",
         description: departmentId
-          ? `${staffData.full_name} has been assigned to ${departmentName}`
-          : `${staffData.full_name} has been unassigned`,
+          ? `${staffMember.full_name} has been assigned to ${departmentName}`
+          : `${staffMember.full_name} has been unassigned`,
       });
     } catch (error) {
       console.error("Error assigning staff:", error);
@@ -313,85 +426,28 @@ export default function ResourceAllocation() {
     departmentId: string | null,
   ) => {
     try {
-      // Get equipment and department details for notification
-      const { data: equipData, error: equipError } = await supabase
-        .from("equipment")
-        .select("*")
-        .eq("id", equipmentId)
-        .single();
-
-      if (equipError) throw equipError;
+      // Get equipment details for notification
+      const equipItem = equipment.find((e) => e.id === equipmentId);
+      if (!equipItem) throw new Error("Equipment not found");
 
       let departmentName = "Unassigned";
       if (departmentId) {
-        const { data: deptData, error: deptError } = await supabase
-          .from("departments")
-          .select("name")
-          .eq("id", departmentId)
-          .single();
-
-        if (!deptError && deptData) {
-          departmentName = deptData.name;
-        }
+        const dept = departments.find((d) => d.id === departmentId);
+        if (dept) departmentName = dept.name;
       }
 
-      // Update the equipment assignment
-      const { error } = await supabase
-        .from("equipment")
-        .update({
-          department_id: departmentId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", equipmentId);
-
-      if (error) throw error;
-
-      // Update local state for immediate feedback
+      // Update the equipment assignment in our local state
       setEquipment((prevEquipment) =>
         prevEquipment.map((e) =>
           e.id === equipmentId ? { ...e, department_id: departmentId } : e,
         ),
       );
 
-      // Notify administrators and staff in the department
-      const { data: staffData, error: staffError } = await supabase
-        .from("staff")
-        .select("user_id")
-        .or(
-          `role.eq.admin${departmentId ? `,department_id.eq.${departmentId}` : ""}`,
-        )
-        .not("user_id", "is", null);
-
-      if (!staffError && staffData && staffData.length > 0) {
-        const title = "Equipment Assignment Update";
-        const message = departmentId
-          ? `${equipData.name} (${equipData.type}) has been assigned to ${departmentName}`
-          : `${equipData.name} (${equipData.type}) has been unassigned from its department`;
-
-        await Promise.all(
-          staffData.map(async (staff) => {
-            if (staff.user_id) {
-              const { error: notifError } = await supabase
-                .from("notifications")
-                .insert({
-                  user_id: staff.user_id,
-                  title,
-                  message,
-                  is_read: false,
-                });
-
-              if (notifError)
-                console.error("Error creating notification:", notifError);
-            }
-          }),
-        );
-      }
-
       toast({
         title: "Equipment Assignment Updated",
         description: departmentId
-          ? `${equipData.name} has been assigned to ${departmentName}`
-          : `${equipData.name} has been unassigned`,
+          ? `${equipItem.name} has been assigned to ${departmentName}`
+          : `${equipItem.name} has been unassigned`,
       });
     } catch (error) {
       console.error("Error assigning equipment:", error);
@@ -407,69 +463,15 @@ export default function ResourceAllocation() {
     equipmentId: string,
     status: EquipmentStatus,
   ) => {
-    if (!user?.id) return;
-
     try {
       // Get equipment details for notification
-      const { data: equipData, error: equipError } = await supabase
-        .from("equipment")
-        .select("*, departments(name)")
-        .eq("id", equipmentId)
-        .single();
+      const equipItem = equipment.find((e) => e.id === equipmentId);
+      if (!equipItem) throw new Error("Equipment not found");
 
-      if (equipError) throw equipError;
-
-      // Update the equipment status
-      const { error } = await supabase
-        .from("equipment")
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq("id", equipmentId);
-
-      if (error) throw error;
-
-      // Update local state for immediate feedback
+      // Update the equipment status in our local state
       setEquipment((prevEquipment) =>
         prevEquipment.map((e) => (e.id === equipmentId ? { ...e, status } : e)),
       );
-
-      // Notify administrators and staff in the department
-      const departmentId = equipData.department_id;
-      const { data: staffData, error: staffError } = await supabase
-        .from("staff")
-        .select("user_id")
-        .or(
-          `role.eq.admin${departmentId ? `,department_id.eq.${departmentId}` : ""}`,
-        )
-        .not("user_id", "is", null);
-
-      if (!staffError && staffData && staffData.length > 0) {
-        const departmentName = equipData.departments?.name || "Unassigned";
-        const statusDisplay = status
-          .split("_")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-
-        const title = "Equipment Status Update";
-        const message = `${equipData.name} (${equipData.type}) in ${departmentName} is now ${statusDisplay}`;
-
-        await Promise.all(
-          staffData.map(async (staff) => {
-            if (staff.user_id) {
-              const { error: notifError } = await supabase
-                .from("notifications")
-                .insert({
-                  user_id: staff.user_id,
-                  title,
-                  message,
-                  is_read: false,
-                });
-
-              if (notifError)
-                console.error("Error creating notification:", notifError);
-            }
-          }),
-        );
-      }
 
       const statusDisplay = status
         .split("_")
@@ -478,7 +480,7 @@ export default function ResourceAllocation() {
 
       toast({
         title: "Equipment Status Updated",
-        description: `${equipData.name} is now ${statusDisplay}`,
+        description: `${equipItem.name} is now ${statusDisplay}`,
       });
     } catch (error) {
       console.error("Error updating equipment status:", error);
@@ -730,7 +732,7 @@ export default function ResourceAllocation() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={async () => {
+                    onClick={() => {
                       try {
                         if (!newEquipmentName || !newEquipmentType) {
                           toast({
@@ -742,16 +744,19 @@ export default function ResourceAllocation() {
                           return;
                         }
 
-                        const { error } = await supabase
-                          .from("equipment")
-                          .insert({
-                            name: newEquipmentName,
-                            type: newEquipmentType,
-                            department_id: newEquipmentDepartment,
-                            status: "available",
-                          });
+                        // Create new equipment with a unique ID
+                        const newEquipment: Equipment = {
+                          id: `new-${Date.now()}`,
+                          name: newEquipmentName,
+                          type: newEquipmentType,
+                          department_id: newEquipmentDepartment,
+                          status: "available",
+                          last_maintenance_date: new Date().toISOString(),
+                          notes: null,
+                        };
 
-                        if (error) throw error;
+                        // Add to equipment array
+                        setEquipment([...equipment, newEquipment]);
 
                         toast({
                           title: "Equipment added",
@@ -890,33 +895,21 @@ export default function ResourceAllocation() {
                 <DialogFooter>
                   <Button
                     variant="destructive"
-                    onClick={async () => {
-                      try {
-                        if (!editingEquipment) return;
+                    onClick={() => {
+                      if (!editingEquipment) return;
 
-                        const { error } = await supabase
-                          .from("equipment")
-                          .delete()
-                          .eq("id", editingEquipment.id);
+                      // Remove equipment from array
+                      setEquipment(
+                        equipment.filter((e) => e.id !== editingEquipment.id),
+                      );
 
-                        if (error) throw error;
+                      toast({
+                        title: "Equipment deleted",
+                        description:
+                          "The equipment has been deleted successfully.",
+                      });
 
-                        toast({
-                          title: "Equipment deleted",
-                          description:
-                            "The equipment has been deleted successfully.",
-                        });
-
-                        setIsEditEquipmentOpen(false);
-                      } catch (error: any) {
-                        toast({
-                          title: "Error deleting equipment",
-                          description:
-                            error.message ||
-                            "An error occurred while deleting the equipment.",
-                          variant: "destructive",
-                        });
-                      }
+                      setIsEditEquipmentOpen(false);
                     }}
                   >
                     <Trash className="h-4 w-4 mr-2" />
@@ -930,7 +923,7 @@ export default function ResourceAllocation() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={async () => {
+                    onClick={() => {
                       try {
                         if (!editingEquipment) return;
 
@@ -944,18 +937,12 @@ export default function ResourceAllocation() {
                           return;
                         }
 
-                        const { error } = await supabase
-                          .from("equipment")
-                          .update({
-                            name: editingEquipment.name,
-                            type: editingEquipment.type,
-                            department_id: editingEquipment.department_id,
-                            status: editingEquipment.status,
-                            updated_at: new Date().toISOString(),
-                          })
-                          .eq("id", editingEquipment.id);
-
-                        if (error) throw error;
+                        // Update equipment in array
+                        setEquipment(
+                          equipment.map((e) =>
+                            e.id === editingEquipment.id ? editingEquipment : e,
+                          ),
+                        );
 
                         toast({
                           title: "Equipment updated",
@@ -1048,8 +1035,8 @@ export default function ResourceAllocation() {
                           key={e.id}
                           className="bg-white p-3 rounded border shadow-sm cursor-move"
                           draggable
-                          onDragStart={(e) =>
-                            handleDragStart(e, e.id, "equipment")
+                          onDragStart={(event) =>
+                            handleDragStart(event, e.id, "equipment")
                           }
                         >
                           <div className="font-medium">{e.name}</div>
@@ -1163,7 +1150,9 @@ export default function ResourceAllocation() {
                       key={e.id}
                       className="bg-white p-3 rounded border shadow-sm cursor-move"
                       draggable
-                      onDragStart={(e) => handleDragStart(e, e.id, "equipment")}
+                      onDragStart={(event) =>
+                        handleDragStart(event, e.id, "equipment")
+                      }
                     >
                       <div className="font-medium">{e.name}</div>
                       <div className="flex justify-between items-center mt-1">
