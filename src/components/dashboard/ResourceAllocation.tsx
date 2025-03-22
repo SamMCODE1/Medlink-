@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { supabase } from "../../../supabase/supabase";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -311,7 +310,11 @@ const equipmentStatusColors = {
   out_of_order: "bg-red-100 text-red-800 border-red-300",
 };
 
-export default function ResourceAllocation() {
+export default function ResourceAllocation({
+  searchQuery = "",
+}: {
+  searchQuery?: string;
+}) {
   const { user, userData } = useAuth();
   const { toast } = useToast();
   const [departments, setDepartments] = useState<Department[]>(mockDepartments);
@@ -340,12 +343,6 @@ export default function ResourceAllocation() {
   );
   const isAdmin = userData?.role === "admin";
   const canEdit = isAdmin; // Only admins can edit
-
-  useEffect(() => {
-    fetchDepartments();
-    fetchStaff();
-    fetchEquipment();
-  }, []);
 
   const fetchDepartments = async () => {
     try {
